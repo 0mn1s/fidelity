@@ -1,0 +1,39 @@
+```{r}
+library(tidyverse)
+imdb <- read.csv("IMDB Dataset.csv")
+imdb <- imdb %>% select(-sentiment)
+
+text <- imdb[,1] #vector
+text_df <- tibble(line = 1:50000, text = text)
+
+library(tidytext)
+tidy <- text_df %>%
+  unnest_tokens(word, text, token="words") %>%
+  anti_join(stop_words)
+
+common <- tidy %>%
+  count(word, sort = TRUE) 
+#most common: br>movie>film>time>...
+
+library(ggplot2)
+
+tidy %>%
+  count(word, sort = TRUE) %>%
+  filter(n > 600) %>%
+  mutate(word = reorder(word, n)) %>%
+  ggplot(aes(n, word)) +
+  geom_col() +
+  labs(y = NULL)
+
+
+library(tidyr)
+# 
+# frequency <- tidy %>%
+#   mutate(word = str_replace(word, "br", NA_character_)) %>%
+#   drop_na() %>%
+#   count(line,word) %>%
+#   group_by(line) %>%
+#   arrange(desc(n)) %>%
+#   slice(1:7). #top7
+```
+
